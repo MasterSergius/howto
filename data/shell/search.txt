@@ -1,0 +1,19 @@
+# description: find all files with given extension
+# tags: find linux bash files extension
+# command: find <where_to_look> -name "*.<extension>"
+# example: find ~ -name "*.py"
+# explanation: find looks recursively in given directory,
+    "~" means current user home directory,
+    * - wildcard, so *.py will match all files with exension "py", for example:
+        hello_world.py, main.py
+# notes: tested on ubuntu linux
+##########
+# description: find all files changed today
+# tags: find linux bash files date time
+# command: find <where_to_look> -mtime -1 -ls
+# example: find /var -mtime -1 -ls
+# explanation: find looks recursively in given directory,
+    -mtime n: file's data was last modified n*24 hours ago, exact match
+    "-" before 1 means anything changed one day or less ago
+# notes: tested on ubuntu linux
+##########
