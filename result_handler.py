@@ -3,9 +3,7 @@ import re
 
 from difflib import SequenceMatcher
 
-
-# commands in file should be separated with at least 10 symbols '#'
-SEPARATOR = '#' * 10
+from config import SEPARATOR, THRESHOLD
 
 
 class SearchResult:
@@ -17,6 +15,15 @@ class SearchResult:
         self.explanation = explanation
         self.notes = notes
         self.score = score
+
+    def __eq__(self, other):
+        return self.score == other.score
+
+    def __lt__(self, other):
+        return self.score < other.score
+
+    def __gt__(self, other):
+        return self.score > other.score
 
 
 def get_tags_score(tags, user_input):
@@ -47,9 +54,6 @@ def parse_command(command_str, user_input):
     notes = re.findall('# notes:(.*)' + SEPARATOR, command_str, re.DOTALL)[0].strip()
     score = SequenceMatcher(None, description, user_input).ratio() * get_tags_score(tags, user_input)
 
-    # TODO: remove debug prints
-    print(description)
-    print(score)
     return SearchResult(description, tags, command, example, explanation, notes, score)
 
 
@@ -72,7 +76,9 @@ def parse_file(filename, user_input):
             if line.startswith(SEPARATOR):
                 # add separator for easier regex
                 command += line
-                results.append(parse_command(command, user_input))
+                search_result = parse_command(command, user_input)
+                if search_result.score >= THRESHOLD:
+                    results.append(search_result)
                 command = ''
             else:
                 command += line
@@ -85,5 +91,5 @@ def find_command(user_input):
     for root, subdirs, files in os.walk('data'):
         for filename in files:
             full_path = os.path.join(root, filename)
-            results.append(parse_file(full_path, user_input))
-    return results
+            results.extend(parse_file(full_path, user_input))
+    return sorted(results, reverse=True)
