@@ -1,0 +1,9 @@
+# description: determine size of directory, how much disk space is used
+# tags: linux bash filesystem size directory
+# command: du -d0 -h <path_to_dir>
+# example: du -d0 -h ~/Downloads
+# explanation: du - disk usage utility
+    "-d0" - depth 0, i.e. don't determine size of subdirectories
+    "-h" - human readable format, show most suitable size units: byte, kilobyte, megabyte, etc.
+# notes: tested on ubuntu linux
+##########
