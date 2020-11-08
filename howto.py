@@ -6,7 +6,7 @@ from result_handler import SearchResult, find_command
 
 
 def print_search_result(result):
-    click.echo(f'Description: {result.description}')
+    click.echo(f'Description: {result.descriptions}')
     click.echo(f'Command syntax: {result.command}')
     click.echo(f'Example: {result.example}')
     click.echo(f'match score (for debugging): {result.score}')

@@ -7,14 +7,23 @@ from config import SEPARATOR, THRESHOLD
 
 
 class SearchResult:
-    def __init__(self, description, tags, command, example, explanation, notes, score):
-        self.description = description
+    def __init__(self,
+                 description,
+                 tags,
+                 command,
+                 example,
+                 explanation,
+                 notes,
+                 user_input):
+        # each description should be one-liner
+        self.descriptions = [desc.strip() for desc in description.split('\n')]
         self.tags = tags
         self.command = command
         self.example = example
         self.explanation = explanation
         self.notes = notes
-        self.score = score
+        self.user_input = user_input
+        self._calculate_score()
 
     def __eq__(self, other):
         return self.score == other.score
@@ -24,6 +33,11 @@ class SearchResult:
 
     def __gt__(self, other):
         return self.score > other.score
+
+    def _calculate_score(self):
+        string_match_score = max([SequenceMatcher(None, description, self.user_input).ratio()
+                                  for description in self.descriptions])
+        self.score = string_match_score * get_tags_score(self.tags, self.user_input)
 
 
 def get_tags_score(tags, user_input):
@@ -52,9 +66,8 @@ def parse_command(command_str, user_input):
     example = re.findall('# example:(.*)# explanation:', command_str, re.DOTALL)[0].strip()
     explanation = re.findall('# explanation:(.*)# notes:', command_str, re.DOTALL)[0].strip()
     notes = re.findall('# notes:(.*)' + SEPARATOR, command_str, re.DOTALL)[0].strip()
-    score = SequenceMatcher(None, description, user_input).ratio() * get_tags_score(tags, user_input)
 
-    return SearchResult(description, tags, command, example, explanation, notes, score)
+    return SearchResult(description, tags, command, example, explanation, notes, user_input)
 
 
 def parse_file(filename, user_input):

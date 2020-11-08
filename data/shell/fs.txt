@@ -1,4 +1,5 @@
-# description: determine size of directory, how much disk space is used
+# description: determine size of directory
+               how much disk space is used
 # tags: linux bash filesystem size directory
 # command: du -d0 -h <path_to_dir>
 # example: du -d0 -h ~/Downloads
